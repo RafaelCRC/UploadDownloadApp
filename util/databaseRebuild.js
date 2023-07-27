@@ -22,6 +22,7 @@ function createTables(db) {
             fileId INTEGER PRIMARY KEY AUTOINCREMENT,
             fileName TEXT NOT NULL UNIQUE,
             filePath TEXT NOT NULL,
+            fileLinkHash TEXT NOT NULL UNIQUE,
             filePassword TEXT
         )
         `);

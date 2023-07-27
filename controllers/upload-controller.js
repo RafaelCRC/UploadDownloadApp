@@ -4,7 +4,12 @@ const bcrypt = require('bcrypt');
 exports.uploadFile = async (req, res, next) => {
     try {
         var hash = null;
-        var clientPassword
+        var clientPassword;
+
+        const linkToHash = req.file.originalname + process.env.SECRET;
+        var fileLinkHash = bcrypt.hashSync(linkToHash, 5);
+        fileLinkHash = fileLinkHash.replace(/\//g, "x");
+        const downloadLink = process.env.URL_API + 'download/link/' + fileLinkHash
 
         if (req.headers.authorization) {
             clientPassword = req.headers.authorization.split(' ')[1];
@@ -18,29 +23,31 @@ exports.uploadFile = async (req, res, next) => {
         const existingFile = await sqlite.execute(checkQuery, [req.file.originalname]);
 
         if (existingFile.length > 0) {
-            const updateQuery = 'UPDATE files SET filePath = ?, filePassword = ? WHERE fileName = ?;';
-            await sqlite.execute(updateQuery, [req.file.path, hash, req.file.originalname]);
+            const updateQuery = 'UPDATE files SET filePath = ?, fileLinkHash = ?, filePassword = ? WHERE fileName = ?;';
+            await sqlite.execute(updateQuery, [req.file.path, fileLinkHash, hash, req.file.originalname]);
 
             const response = {
                 message: 'Warning: The file with the same name has been replaced.',
+                link: downloadLink,
                 fileUploaded: {
-                  fileName: req.file.originalname,
-                  filePath: req.file.path,
-                  replaced: true,
+                    fileName: req.file.originalname,
+                    filePath: req.file.path,
+                    replaced: true,
                 },
             };
             return res.status(201).send(response);
 
         } else {
-            const insertQuery = 'INSERT INTO files (fileName, filePath, filePassword) VALUES (?,?,?);';
-            await sqlite.execute(insertQuery, [req.file.originalname, req.file.path, hash]);
+            const insertQuery = 'INSERT INTO files (fileName, filePath, fileLinkHash, filePassword) VALUES (?,?,?,?);';
+            await sqlite.execute(insertQuery, [req.file.originalname, req.file.path, fileLinkHash, hash]);
 
             const response = {
                 message: 'File uploaded successfully',
+                link: downloadLink,
                 fileUploaded: {
-                  fileName: req.file.originalname,
-                  filePath: req.file.path,
-                  replaced: false,
+                    fileName: req.file.originalname,
+                    filePath: req.file.path,
+                    replaced: false,
                 },
             };
             return res.status(201).send(response);

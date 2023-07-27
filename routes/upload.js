@@ -10,18 +10,12 @@ const storage = multer.diskStorage({
         cb(null, './uploads/');
     },
     filename: function(req, file, cb) {
-        const filePath = `./uploads/${file.originalname}`
-        fs.access(filePath, fs.constants.F_OK, (err) => {
-            if (!err) {
-                fs.unlinkSync(filePath);
-            }
-        });
+        const filePath = `./uploads/${file.originalname}`;
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
         cb(null, file.originalname);
-
-
-        //let data = new Date().toISOString().replace(/:/g, '-') + '-';
-        //cb(null, data + file.originalname);
-    }
+    },
 });
 
 const fileFilter = (req, file, cb) => {
@@ -29,7 +23,6 @@ const fileFilter = (req, file, cb) => {
         cb(null, true);
     } else {
         cb(new Error('Invalid file format. Only .gz files are allowed.'));
-        //cb(null, false);
     }
 }
 
