@@ -1,26 +1,25 @@
-//const sqlite = require('../sqlite');
+const sqlite = require('../sqlite');
 
 exports.getFiles = async (req, res, next) => {
     try {
-        //database logic
-        //const result = await sqlite.execute('SELECT * FROM files');
+        const result = await sqlite.execute('SELECT * FROM files');
 
-        // const response = {
-        //     quantity: result.length,
-        //     files: result.map(file => {
-        //         return {
-        //             fileId: file.fileId,
-        //             fileName: file.fileName,
-        //             fileUrl: file.fileUrl,
-        //             request: {
-        //                 type: 'GET',
-        //                 description: 'Downloads a file',
-        //                 url: process.env.URL_API + 'download/' + file.fileName
-        //             }
-        //         }
-        //     })
-        // }
-        return res.status(200).send({ message: 'mock: list of files with download urls' });
+        const response = {
+            quantity: result.length,
+            files: result.map(file => {
+                return {
+                    fileId: file.fileId,
+                    fileName: file.fileName,
+                    filePath: file.filePath,
+                    request: {
+                        type: 'GET',
+                        description: 'Downloads a file',
+                        url: process.env.URL_API + 'download/' + file.fileName
+                    }
+                }
+            })
+        }
+        return res.status(200).send(response);
         
     } catch (error) {
         return res.status(500).send({ error: error });
@@ -29,22 +28,22 @@ exports.getFiles = async (req, res, next) => {
 
 exports.downloadFile = async (req, res, next) => {
     try {
-        //database logic
-        //const query = 'SELECT * FROM files where filename = ?;';
-        //const result = await sqlite.execute(query, [req.params.fileName]);
+        const query = 'SELECT * FROM files where filename = ?;';
+        const result = await sqlite.execute(query, [req.params.fileName]);
 
-        // if (result.length == 0) {
-        //     return res.status(404).send({ message: 'File not found' });
-        // }
+        if (result.length == 0) {
+            return res.status(404).send({ message: 'File not found' });
+        }
 
         const response = {
             file: {
-                fileId: "01", //result[0].fileId,
-                fileName: req.params.fileName, //result[0].fileName,
+                fileId: result[0].fileId,
+                fileName: result[0].fileName,
+                filePath: result[0].filePath,
                 request: {
                     type: 'GET',
                     description: 'Return all files',
-                    url: 'http://localhost:3000/download' //process.env.URL_API + 'download'
+                    url: process.env.URL_API + 'download'
                 }
             }
         }
@@ -52,6 +51,7 @@ exports.downloadFile = async (req, res, next) => {
         return res.status(201).send(response);
         
     } catch (error) {
+        console.log(error)
         return res.status(500).send({ error: error });
     }
 };
