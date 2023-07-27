@@ -12,7 +12,6 @@ exports.execute = (query, params = []) => {
         if (error) {
             reject(error);
         } else {
-            console.log(rows); //temporary for debug purposes
             resolve(rows);
         }
         });

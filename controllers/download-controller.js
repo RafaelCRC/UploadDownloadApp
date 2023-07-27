@@ -1,4 +1,6 @@
 const sqlite = require('../sqlite');
+const bcrypt = require('bcrypt');
+const fs = require('fs');
 
 exports.getFiles = async (req, res, next) => {
     try {
@@ -10,7 +12,7 @@ exports.getFiles = async (req, res, next) => {
                 return {
                     fileId: file.fileId,
                     fileName: file.fileName,
-                    filePath: file.filePath,
+                    requirePassword: !!file.filePassword,
                     request: {
                         type: 'GET',
                         description: 'Download the file',
@@ -44,43 +46,56 @@ exports.downloadFile = async (req, res, next) => {
                 clientPassword = req.headers.authorization.split(' ')[1];
             }
 
-            if (clientPassword === file.filePassword) { //later will be hashed with bcrypt
-                const response = {
-                    file: {
-                        fileId: file.fileId,
-                        fileName: file.fileName,
-                        filePath: file.filePath,
-                        request: {
-                            type: 'GET',
-                            description: 'Return all files',
-                            url: process.env.URL_API + 'download'
-                        }
-                    }
+            bcrypt.compare(clientPassword, file.filePassword, (err, passwordMatch) => {
+                if (err || !passwordMatch) {
+                    return res.status(401).send({ message: 'Invalid password' });
+                } else {
+                    handleFileDownload(file, res)
                 }
-                return res.status(200).send(response);
-
-            } else {
-                return res.status(401).send({ message: 'Invalid password' });
-            }
+            });
         } else {
-            const response = {
-                file: {
-                    fileId: file.fileId,
-                    fileName: file.fileName,
-                    filePath: file.filePath,
-                    request: {
-                        type: 'GET',
-                        description: 'Return all files',
-                        url: process.env.URL_API + 'download'
-                    }
-                }
-            }
-            return res.status(201).send(response);
-        }
+            handleFileDownload(file, res)
 
-        //download logic needed
+        }
     } catch (error) {
-        console.log(error)
         return res.status(500).send({ error: error });
     }
+};
+
+exports.downloadFileByLink  = async (req, res, next) => {
+    try {
+        const hashedLink = req.params.hashedLink;
+        console.log(hashedLink);
+        const query = 'SELECT * FROM files WHERE fileLinkHash = ?;';
+        const result = await sqlite.execute(query, [hashedLink]);
+
+        if (result.length === 0) {
+            return res.status(404).send({ message: 'Invalid download link' });
+        }
+
+        const file = result[0];
+
+        handleFileDownload(file, res)
+
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+};
+
+const handleFileDownload = (file, res) => {
+    const filePath = file.filePath;
+
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            return res.status(404).send({ message: 'File not found' });
+        }
+
+        res.set({
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': `attachment; filename="${file.fileName}"`,
+        });
+
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+    });
 };

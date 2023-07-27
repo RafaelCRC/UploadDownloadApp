@@ -54,7 +54,6 @@ exports.uploadFile = async (req, res, next) => {
         }
 
     } catch (error) {
-        console.log(error) // to remove
         return res.status(500).send({ error: error });
     }
 };
