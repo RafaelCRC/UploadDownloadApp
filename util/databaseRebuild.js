@@ -28,5 +28,4 @@ function createTables(db) {
     });
 };
 
-
 initializeDatabase()
