@@ -1,10 +1,11 @@
 const sqlite = require('../sqlite/sqlite');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const SQL_QUERIES = require('../config/sql-queries');
 
 exports.getFiles = async (req, res, next) => {
     try {
-        const result = await sqlite.execute('SELECT * FROM files');
+        const result = await sqlite.execute(SQL_QUERIES.SELECT_ALL_FILES);
 
         const response = {
             quantity: result.length,
@@ -24,16 +25,17 @@ exports.getFiles = async (req, res, next) => {
         return res.status(200).send(response);
         
     } catch (error) {
-        return res.status(500).send({ error: error });
+        console.error(error);
+        return res.status(500).send({ error: 'Internal server error' });
     }
 };
 
 exports.downloadFile = async (req, res, next) => {
     try {
-        const query = 'SELECT * FROM files where filename = ?;';
+        const query = SQL_QUERIES.SELECT_FILE_BY_NAME;
         const result = await sqlite.execute(query, [req.params.fileName]);
 
-        if (result.length == 0) {
+        if (result.length === 0) {
             return res.status(404).send({ message: 'File not found' });
         }
 
@@ -45,20 +47,22 @@ exports.downloadFile = async (req, res, next) => {
             if (req.headers.authorization) {
                 clientPassword = req.headers.authorization.split(' ')[1];
             }
+            try {
+                const passMatch = await bcrypt.compare(clientPassword, file.filePassword);
 
-            bcrypt.compare(clientPassword, file.filePassword, (err, passwordMatch) => {
-                if (err || !passwordMatch) {
+                if (!passMatch) {
                     return res.status(401).send({ message: 'Invalid password' });
-                } else {
-                    handleFileDownload(file, res)
                 }
-            });
-        } else {
-            handleFileDownload(file, res)
-
+            } catch (error) {
+                return res.status(500).send({ error: 'Error comparing passwords' });
+            }
         }
+
+        handleFileDownload(file, res)
+
     } catch (error) {
-        return res.status(500).send({ error: error });
+        console.error(error);
+        return res.status(500).send({ error: 'Internal server error' });
     }
 };
 
@@ -66,7 +70,7 @@ exports.downloadFileByLink  = async (req, res, next) => {
     try {
         const hashedLink = req.params.hashedLink;
         console.log(hashedLink);
-        const query = 'SELECT * FROM files WHERE fileLinkHash = ?;';
+        const query = SQL_QUERIES.SELECT_FILE_BY_HASH;
         const result = await sqlite.execute(query, [hashedLink]);
 
         if (result.length === 0) {
@@ -78,7 +82,8 @@ exports.downloadFileByLink  = async (req, res, next) => {
         handleFileDownload(file, res)
 
     } catch (error) {
-        return res.status(500).send({ error: error });
+        console.error(error);
+        return res.status(500).send({ error: 'Internal server error' });
     }
 };
 
