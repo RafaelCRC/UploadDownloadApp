@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcrypt');
 
 function populateDatabase() {    
     const db = new sqlite3.Database('database.db', (err) => {
@@ -19,7 +20,7 @@ function populate(db) {
         const numRows = 10
         for (let i = 0; i < numRows; i++) {
             if (i % 2 != 0) {
-                password = "senha" + i;
+                password = bcrypt.hashSync("senha" + i, 10);
             } else {
                 password = null;
             }

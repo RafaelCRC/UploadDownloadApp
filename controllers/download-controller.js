@@ -13,7 +13,7 @@ exports.getFiles = async (req, res, next) => {
                     filePath: file.filePath,
                     request: {
                         type: 'GET',
-                        description: 'Downloads a file',
+                        description: 'Download the file',
                         url: process.env.URL_API + 'download/' + file.fileName
                     }
                 }
@@ -35,21 +35,50 @@ exports.downloadFile = async (req, res, next) => {
             return res.status(404).send({ message: 'File not found' });
         }
 
-        const response = {
-            file: {
-                fileId: result[0].fileId,
-                fileName: result[0].fileName,
-                filePath: result[0].filePath,
-                request: {
-                    type: 'GET',
-                    description: 'Return all files',
-                    url: process.env.URL_API + 'download'
+        const file = result[0];
+
+        if (file.filePassword) {
+            var clientPassword
+
+            if (req.headers.authorization) {
+                clientPassword = req.headers.authorization.split(' ')[1];
+            }
+
+            if (clientPassword === file.filePassword) { //later will be hashed with bcrypt
+                const response = {
+                    file: {
+                        fileId: file.fileId,
+                        fileName: file.fileName,
+                        filePath: file.filePath,
+                        request: {
+                            type: 'GET',
+                            description: 'Return all files',
+                            url: process.env.URL_API + 'download'
+                        }
+                    }
+                }
+                return res.status(200).send(response);
+
+            } else {
+                return res.status(401).send({ message: 'Invalid password' });
+            }
+        } else {
+            const response = {
+                file: {
+                    fileId: file.fileId,
+                    fileName: file.fileName,
+                    filePath: file.filePath,
+                    request: {
+                        type: 'GET',
+                        description: 'Return all files',
+                        url: process.env.URL_API + 'download'
+                    }
                 }
             }
+            return res.status(201).send(response);
         }
+
         //download logic needed
-        return res.status(201).send(response);
-        
     } catch (error) {
         console.log(error)
         return res.status(500).send({ error: error });
