@@ -1,4 +1,4 @@
-const sqlite = require('../sqlite');
+const sqlite = require('../sqlite/sqlite');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 

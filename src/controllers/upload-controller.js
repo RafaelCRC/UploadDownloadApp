@@ -1,15 +1,24 @@
-const sqlite = require('../sqlite');
+const sqlite = require('../sqlite/sqlite');
 const bcrypt = require('bcrypt');
+const SQL_QUERIES = require('../config/sql-queries');
+
+const getDownloadLinkHash = async (fileName) => {
+    const linkToHash = fileName + process.env.SECRET;
+    let fileLinkHash = await bcrypt.hashSync(linkToHash, 5);
+    fileLinkHash = fileLinkHash.replace(/\//g, "x");
+    return fileLinkHash;
+};
+
+const checkIfFileExists = async (fileName) => {
+    const checkQuery = SQL_QUERIES.SELECT_FILE_BY_NAME;
+    const existingFile = await sqlite.execute(checkQuery, [fileName]);
+    return existingFile.length > 0;
+};
 
 exports.uploadFile = async (req, res, next) => {
     try {
         var hash = null;
         var clientPassword;
-
-        const linkToHash = req.file.originalname + process.env.SECRET;
-        var fileLinkHash = bcrypt.hashSync(linkToHash, 5);
-        fileLinkHash = fileLinkHash.replace(/\//g, "x");
-        const downloadLink = process.env.URL_API + 'download/link/' + fileLinkHash
 
         if (req.headers.authorization) {
             clientPassword = req.headers.authorization.split(' ')[1];
@@ -18,12 +27,19 @@ exports.uploadFile = async (req, res, next) => {
         if (clientPassword) {
             hash = await bcrypt.hashSync(clientPassword, 10);
         };
-        
-        const checkQuery = 'SELECT * FROM files WHERE fileName = ?;';
-        const existingFile = await sqlite.execute(checkQuery, [req.file.originalname]);
 
-        if (existingFile.length > 0) {
-            const updateQuery = 'UPDATE files SET filePath = ?, fileLinkHash = ?, filePassword = ? WHERE fileName = ?;';
+        const fileName = req.file.originalname;
+        if (!fileName || typeof fileName !== 'string') {
+            return res.status(400).send({ error: 'Invalid file name' });
+        }
+
+        const fileLinkHash = await getDownloadLinkHash(fileName);
+        const downloadLink = process.env.URL_API + 'download/link/' + fileLinkHash;
+
+        const fileExists = await checkIfFileExists(fileName);
+
+        if (fileExists) {
+            const updateQuery = SQL_QUERIES.UPDATE_FILE;
             await sqlite.execute(updateQuery, [req.file.path, fileLinkHash, hash, req.file.originalname]);
 
             const response = {
@@ -38,7 +54,7 @@ exports.uploadFile = async (req, res, next) => {
             return res.status(201).send(response);
 
         } else {
-            const insertQuery = 'INSERT INTO files (fileName, filePath, fileLinkHash, filePassword) VALUES (?,?,?,?);';
+            const insertQuery = SQL_QUERIES.INSERT_FILE;
             await sqlite.execute(insertQuery, [req.file.originalname, req.file.path, fileLinkHash, hash]);
 
             const response = {
@@ -54,6 +70,7 @@ exports.uploadFile = async (req, res, next) => {
         }
 
     } catch (error) {
-        return res.status(500).send({ error: error });
+        console.error(error);
+        return res.status(500).send({ error: 'Internal server error' });
     }
 };
