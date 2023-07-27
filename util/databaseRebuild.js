@@ -20,7 +20,7 @@ function createTables(db) {
         db.run(`
         CREATE TABLE files (
             fileId INTEGER PRIMARY KEY AUTOINCREMENT,
-            fileName TEXT NOT NULL,
+            fileName TEXT NOT NULL UNIQUE,
             filePath TEXT NOT NULL,
             filePassword TEXT
         )
