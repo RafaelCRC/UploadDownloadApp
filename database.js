@@ -7,7 +7,7 @@ function initializeDatabase() {
         } else {
             console.log('Connection to SQLite database successfully established.');
             createTables(db);
-            console.log('Connection to SQLite database successfully established.');
+            console.log('Database builded.');
         }
     });
 };
@@ -20,6 +20,7 @@ function createTables(db) {
         db.run(`
         CREATE TABLE files (
             fileId INTEGER PRIMARY KEY AUTOINCREMENT,
+            fileName TEXT NOT NULL,
             filePath TEXT NOT NULL,
             filePassword TEXT
         )
@@ -27,19 +28,5 @@ function createTables(db) {
     });
 };
 
-function createTables(db) {
-    db.serialize(() => {
-    
-        db.run(`DROP TABLE IF EXISTS files`);
-  
-        db.run(`
-        CREATE TABLE files (
-            fileId INTEGER PRIMARY KEY AUTOINCREMENT,
-            filePath TEXT NOT NULL,
-            filePassword TEXT
-        )
-        `);
-    });
-};
 
 initializeDatabase()
