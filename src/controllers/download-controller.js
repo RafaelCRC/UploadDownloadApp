@@ -42,10 +42,13 @@ exports.downloadFile = async (req, res, next) => {
         const file = result[0];
 
         if (file.filePassword) {
-            var clientPassword
-
-            if (req.headers.authorization) {
-                clientPassword = req.headers.authorization.split(' ')[1];
+            const authorizationHeader = req.headers.authorization;
+            if (!authorizationHeader) {
+                return res.status(401).send({ message: 'Authorization header missing' });
+            }
+            const [, clientPassword] = authorizationHeader.split(' ');
+            if (!clientPassword) {
+                return res.status(401).send({ message: 'Password missing in the authorization header' });
             }
             try {
                 const passMatch = await bcrypt.compare(clientPassword, file.filePassword);
