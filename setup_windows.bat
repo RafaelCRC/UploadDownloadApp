@@ -1,15 +1,15 @@
 @echo off
 
-REM Download and install Node.js LTS
+echo Installing Node.js...
 curl -fsSL https://nodejs.org/dist/v16.7.0/node-v16.7.0-x64.msi -o node.msi
 msiexec /i node.msi /qn
 del node.msi
 
-REM Install project dependencies
-npm install
+echo Installing project dependencies...
+call npm install
 
-REM Build the database
-npm run dbRebuild
+echo Building the database...
+call npm run dbBuild
 
-REM Start the application
-npm start
+echo Starting the application...
+call npm start

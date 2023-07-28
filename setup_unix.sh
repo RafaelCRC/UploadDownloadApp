@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Install Node.js LTS
+echo "Installing Node.js..."
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# Install project dependencies
+echo "Installing project dependencies..."
 npm install
 
-# Build the database
+echo "Building the database..."
 npm run dbRebuild
 
-# Start the application
+echo "Starting the application..."
 npm start
