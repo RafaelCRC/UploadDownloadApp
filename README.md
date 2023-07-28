@@ -29,6 +29,10 @@ The UploadDownloadApp is an application that allows users to upload and download
    - [Ambient Variables](#ambient-variables)
 - [Stopping the Application](#stopping-the-application)
 
+#
+
+- [Running Tests](#running-tests)
+
 ## Setup on Unix
 
 ### Running Setup Script on Unix
@@ -162,3 +166,13 @@ Keep in mind that the application uses 2 ambient variables in nodemon.json file 
 # Stopping the Application
 
 To stop the UploadDownloadApp, press Ctrl + C in the terminal or command prompt where the server is running.
+
+# Running Tests
+
+To run the test suite and check the application's test coverage, use the following command:
+
+```bash
+npm test
+```
+
+The tests will be executed, and the test coverage report will be displayed in the terminal.
