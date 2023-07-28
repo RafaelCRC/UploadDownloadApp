@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
     "dbRebuild": "node ./util/databaseRebuild.js",
+    "dbBuild": "node ./util/databaseBuild.js",
     "dbPopulate": "node ./util/databasePopulate.js"
   },
   "keywords": [
