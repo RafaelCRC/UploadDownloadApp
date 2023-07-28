@@ -47,7 +47,7 @@ exports.uploadFile = async (req, res, next) => {
                 link: downloadLink,
                 fileUploaded: {
                     fileName: req.file.originalname,
-                    filePath: req.file.path,
+                    requirePassword: !!hash,
                     replaced: true,
                 },
             };
@@ -62,7 +62,7 @@ exports.uploadFile = async (req, res, next) => {
                 link: downloadLink,
                 fileUploaded: {
                     fileName: req.file.originalname,
-                    filePath: req.file.path,
+                    requirePassword: !!hash,
                     replaced: false,
                 },
             };

@@ -4,11 +4,14 @@
   "description": "application with the purpose of uploading and downloading .gz files.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "nodemon server.js",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "dbRebuild": "node ./util/databaseRebuild.js",
     "dbBuild": "node ./util/databaseBuild.js",
     "dbPopulate": "node ./util/databasePopulate.js"
+
   },
   "keywords": [
     "node",
@@ -29,6 +32,8 @@
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "jest": "^29.6.2",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
   }
 }
