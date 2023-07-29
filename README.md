@@ -4,6 +4,8 @@ The UploadDownloadApp is an application that allows users to upload and download
 
 The Docker image for the application is publicly available on Docker Hub at the following link: [rafaelcrc/upload-download-app](https://hub.docker.com/repository/docker/rafaelcrc/upload-download-app/general).
 
+1. [Running Locally](documentation/local)
+
 ## Table of Contents
 ### Running Locally
 - [Setup on Unix](#setup-on-unix)
