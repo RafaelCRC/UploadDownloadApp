@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-download-app-service
+  namespace: sample
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: upload-download-app

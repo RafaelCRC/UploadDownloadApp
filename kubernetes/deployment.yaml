@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  namespace: sample
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: upload-download-app
+    spec:
+      containers:
+        - name: upload-download-app
+          image: rafaelcrc/upload-download-app:v1.0
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: "80"
+            - name: SECRET
+              value: "somesecret"
+            - name: URL_API
+              value: "minikube-example.com/"
+  selector:
+    matchLabels:
+      app: upload-download-app
