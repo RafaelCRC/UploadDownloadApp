@@ -20,16 +20,20 @@ describe('Download Controller Tests', () => {
     let link;
 
     beforeAll(async () => {
-        const response = await request(app)
+        try {
+            const response = await request(app)
             .post('/upload')
             .attach("file", testFileNoPass, fileSample.filenameWithNoPass);
 
-        link = response.body.link;
+            link = response.body.link;
 
-        await request(app)
-            .post('/upload')
-            .set('Authorization', `Bearer ${pass}`)
-            .attach("file", testFileWithPass, fileSample.filenameWithPass);
+            await request(app)
+                .post('/upload')
+                .set('Authorization', `Bearer ${pass}`)
+                .attach("file", testFileWithPass, fileSample.filenameWithPass);
+            } catch (error) {
+                console.error('Error in before all: ', error);
+            }
     });
 
     afterAll(async () => {
