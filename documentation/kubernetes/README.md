@@ -2,12 +2,48 @@
 
 This documentation will guide you through the process of setting up a Kubernetes cluster with an Ingress controller to deploy and access the application.
 
+- [Script Setup](script-setup)
+- [Manual Setup](manual-setup)
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your machine:
 
 1. Minikube [Install Minikube](https://minikube.sigs.k8s.io/docs/start/)
 2. kubectl [install kubectl](https://kubernetes.io/docs/tasks/tools/) (if not packaged together with minikube)
+
+Now Navigate to Kubernetes Folder in the repository.
+
+# Script Setup
+
+## Setup on Windows
+
+Open Windows PowerShell as an administrator
+
+Make sure you enable scripts in powershell by running the following command:
+
+```bash
+Set-ExecutionPolicy RemoteSigned
+```
+
+Then execute the script:
+
+```bash
+.\setup_environment.ps1
+```
+
+## Setup on Unix
+
+Open any terminal.
+
+
+Then execute the script:
+
+```bash
+./setup_environment.sh
+```
+
+# Manual Setup
 
 start Minikube by running the command:
 
