@@ -1,10 +1,14 @@
 #!/bin/bash
 
 echo "Starting minikube..."
-minikube start
+minikube start --nodes 2
 
 echo "Enabling ingress addons..."
 minikube addons enable ingress
+
+minikube addons enable ingress-dns
+
+sleep 60
 
 echo "Applying the Kubernetes resources..."
 kubectl apply -f namespace.yaml

@@ -1,9 +1,12 @@
 Write-Host "Starting minikube..."
-minikube start
+minikube start --nodes 2
 
 Write-Host "Enabling ingress addons..."
 minikube addons enable ingress
 
+minikube addons enable ingress-dns
+
+Start-Sleep -Seconds 60
 
 Write-Host "Applying the Kubernetes resources..."
 kubectl apply -f namespace.yaml

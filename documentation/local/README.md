@@ -30,7 +30,19 @@ You can get the UploadDownloadApp code by cloning the GitHub repository using th
 git clone https://github.com/RafaelCRC/UploadDownloadApp.git
 ```
 
-If you are going to use the scripts to start the application, you wont need to install anything, every requirement will be installed automatically
+If you are going to use the scripts to start the application or do it mannually, you will need for both:
+
+1. Install MySQL Server:
+
+You need to install MySQL on your machine. Download and install MySQL from the official website or use a package manager for your operating system.
+
+2. Create a connection with the correct parameters or update in both ./util/start-local.js and nodemon.json. that being:
+
+- host: localhost
+- user: root
+- password: root
+
+be sure to create the connection on port 3306.
 
 If you are going to run the application manually, you are going to need the following prerequisites:
 

@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../src/app');
 const fs = require('fs');
 const path = require('path');
-const sqlite = require('../src/sqlite/sqlite');
+const db = require('../src/database/mysql');
 
 const testFilePath = path.join(__dirname, 'test-files', 'test-file.gz');
 
@@ -29,7 +29,7 @@ describe('Upload Controller Tests', () => {
     
     afterEach(async () => {
         try {
-            sqlite.execute('DELETE FROM files WHERE fileName = ?;', [fileSample.filename]);
+            await db.execute('DELETE FROM files WHERE fileName = ?;', [fileSample.filename]);
         } catch (error) {
             console.log('No files to delete');
         }
@@ -55,7 +55,7 @@ describe('Upload Controller Tests', () => {
 
     test('Should replace an existing file and get a success response', async () => {
         const insertQuery = 'INSERT INTO files (fileName, filePath, fileLinkHash, filePassword) VALUES (?,?,?,?);';
-                sqlite.execute(insertQuery, [
+                db.execute(insertQuery, [
                 fileSample.filename,
                 fileSample.path,
                 'some-link-hash',

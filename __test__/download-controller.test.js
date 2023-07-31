@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../src/app');
 const fs = require('fs');
 const path = require('path');
-const sqlite = require('../src/sqlite/sqlite');
+const db = require('../src/database/mysql');
 
 describe('Download Controller Tests', () => {
     const pass = "a1e5hs48";
@@ -34,6 +34,7 @@ describe('Download Controller Tests', () => {
             } catch (error) {
                 console.error('Error in before all: ', error);
             }
+            console.log('beforeAll hook executed.!!!!!!!!!!!!!!');
     });
 
     afterAll(async () => {
@@ -45,12 +46,10 @@ describe('Download Controller Tests', () => {
             fs.unlinkSync(path.join(uploadFolderPath, file));
           }
         });
-    });
-    
-    afterEach(async () => {
+
         const fileNamesToDelete = [fileSample.filenameWithNoPass, fileSample.filenameWithPass];
         try {
-            await sqlite.execute('DELETE FROM files WHERE fileName IN (?);', [fileNamesToDelete]);
+            await db.execute('DELETE FROM files WHERE fileName IN (?);', [fileNamesToDelete]);
         } catch (error) {
             console.log('No files to delete');
         }
@@ -96,7 +95,7 @@ describe('Download Controller Tests', () => {
     });
 
     test('Should try to download a file with a valid link', async () => {
-        const linkhash = await sqlite.execute('SELECT fileLinkHash FROM files WHERE fileName = ?;',[fileSample.filenameWithNoPass]);
+        const linkhash = await db.execute('SELECT fileLinkHash FROM files WHERE fileName = ?;',[fileSample.filenameWithNoPass]);
 
         const response = await request(app)
             .get(`/download/link/${linkhash[0].fileLinkHash}`);
