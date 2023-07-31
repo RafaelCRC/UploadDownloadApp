@@ -1,4 +1,4 @@
-const sqlite = require('../sqlite/sqlite');
+const db = require('../database/mysql');
 const bcrypt = require('bcrypt');
 const SQL_QUERIES = require('../config/sql-queries');
 
@@ -11,7 +11,7 @@ const getDownloadLinkHash = async (fileName) => {
 
 const checkIfFileExists = async (fileName) => {
     const checkQuery = SQL_QUERIES.SELECT_FILE_BY_NAME;
-    const existingFile = await sqlite.execute(checkQuery, [fileName]);
+    const existingFile = await db.execute(checkQuery, [fileName]);
     return existingFile.length > 0;
 };
 
@@ -40,7 +40,7 @@ exports.uploadFile = async (req, res, next) => {
 
         if (fileExists) {
             const updateQuery = SQL_QUERIES.UPDATE_FILE;
-            await sqlite.execute(updateQuery, [req.file.path, fileLinkHash, hash, req.file.originalname]);
+            await db.execute(updateQuery, [req.file.path, fileLinkHash, hash, req.file.originalname]);
 
             const response = {
                 message: 'Warning: The file with the same name has been replaced.',
@@ -55,7 +55,7 @@ exports.uploadFile = async (req, res, next) => {
 
         } else {
             const insertQuery = SQL_QUERIES.INSERT_FILE;
-            await sqlite.execute(insertQuery, [req.file.originalname, req.file.path, fileLinkHash, hash]);
+            await db.execute(insertQuery, [req.file.originalname, req.file.path, fileLinkHash, hash]);
 
             const response = {
                 message: 'File uploaded successfully',

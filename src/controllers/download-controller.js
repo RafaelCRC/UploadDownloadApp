@@ -1,11 +1,11 @@
-const sqlite = require('../sqlite/sqlite');
+const db = require('../database/mysql');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const SQL_QUERIES = require('../config/sql-queries');
 
 exports.getFiles = async (req, res, next) => {
     try {
-        const result = await sqlite.execute(SQL_QUERIES.SELECT_ALL_FILES);
+        const result = await db.execute(SQL_QUERIES.SELECT_ALL_FILES);
 
         const response = {
             quantity: result.length,
@@ -33,7 +33,7 @@ exports.getFiles = async (req, res, next) => {
 exports.downloadFile = async (req, res, next) => {
     try {
         const query = SQL_QUERIES.SELECT_FILE_BY_NAME;
-        const result = await sqlite.execute(query, [req.params.fileName]);
+        const result = await db.execute(query, [req.params.fileName]);
 
         if (result.length === 0) {
             return res.status(404).send({ message: 'File not found' });
@@ -74,7 +74,7 @@ exports.downloadFileByLink  = async (req, res, next) => {
         const hashedLink = req.params.hashedLink;
         console.log(hashedLink);
         const query = SQL_QUERIES.SELECT_FILE_BY_HASH;
-        const result = await sqlite.execute(query, [hashedLink]);
+        const result = await db.execute(query, [hashedLink]);
 
         if (result.length === 0) {
             return res.status(404).send({ message: 'Invalid download link' });

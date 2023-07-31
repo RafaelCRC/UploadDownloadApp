@@ -8,10 +8,8 @@
     "start": "nodemon server.js",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "dbRebuild": "node ./util/databaseRebuild.js",
-    "dbBuild": "node ./util/databaseBuild.js",
-    "dbPopulate": "node ./util/databasePopulate.js"
-
+    "dbBuild": "node ./util/start-local.js",
+    "dbRebuild": "node ./util/dbRebuild.js"
   },
   "keywords": [
     "node",
@@ -29,6 +27,7 @@
     "express": "^4.18.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.5.2",
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
