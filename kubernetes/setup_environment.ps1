@@ -4,6 +4,7 @@ minikube start
 Write-Host "Enabling ingress addons..."
 minikube addons enable ingress
 
+minikube addons enable ingress-dns
 
 Write-Host "Applying the Kubernetes resources..."
 kubectl apply -f namespace.yaml
@@ -19,11 +20,12 @@ Write-Host "Waiting for the Ingress IP to be assigned..."
 Start-Sleep -Seconds 120
 
 Write-Host "Mapping domain in hosts file..."
-$INGRESS_IP = kubectl get ingress ingress-upload-download-app -n sample -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
+#$INGRESS_IP = kubectl get ingress ingress-upload-download-app -n sample -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
 
 
 $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
-Add-Content -Path $hostsPath -Value "$INGRESS_IP minikube-example.com"
+Add-Content -Path $hostsPath -Value "127.0.0.1 minikube-example.com"
 
+minikube tunnel
 
 Write-Host "Local Kubernetes cluster setup is complete. The application is accessible at http://minikube-example.com."

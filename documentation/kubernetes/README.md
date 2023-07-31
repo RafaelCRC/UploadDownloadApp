@@ -32,6 +32,8 @@ Then execute the script:
 .\setup_environment.ps1
 ```
 
+!!!keep the terminal open!!!
+
 ## Setup on Unix
 
 Open any terminal.
@@ -42,6 +44,8 @@ Then execute the script:
 ```bash
 ./setup_environment.sh
 ```
+
+!!!keep the terminal open!!!
 
 # Manual Setup
 
@@ -56,6 +60,13 @@ install ingress addons by running the command:
 ```bash
 minikube addons enable ingress
 ```
+
+and
+
+```bash
+minikube addons enable ingress-dns
+```
+
 
 # Prepare YAML Files
 
@@ -97,10 +108,14 @@ sudo nano /etc/hosts
 Add the following line at the end of the file:
 
 ```bash
-<ADDRESS> minikube-example.com
+127.0.0.1 minikube-example.com
 ```
 
-Replace < ADDRESS > with the external IP address obtained from the previous step.
+# Run minikube tunnel
+
+```bash
+minikube tunnel
+```
 
 # Access the Application
 
