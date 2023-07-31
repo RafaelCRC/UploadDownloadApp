@@ -4,7 +4,13 @@ This section is a quick guide of how to use the application.
 
 ## Uploading Files
 
-To upload a .gz file, you can use any API client (e.g., Postman, or a custom front-end application). Send a POST request to the /upload endpoint with the file attached as a form field named file. If the file requires a password for download, you can provide the password in the request's Authorization header Bearer.
+To upload a .gz file, you can use any API client (e.g., Postman, or a custom front-end application). Send a POST request to the /upload endpoint with the file attached as a form field named file. 
+
+![Alt Text](./print1.png)
+
+If is desired a password for download, you can provide the password in the request's Authorization header Bearer.
+
+![Alt Text](./print2.png)
 
 Each upload will generate a link only to the uploader (e.g., http://localhost:3000/download/link/$2b$05$lkayPIwP7vgCyio4iKYTTepGmo6jogk2QZCmc7xpXladqoG1svh3u)
 
@@ -13,6 +19,12 @@ If a file with the same name already exists, that file will be replaced with a w
 ## Downloading Files
 
 To download a file, send a GET request to the /download endpoint with the filename in the URL. If the file requires a password for download, provide the password in the request's Authorization header Bearer.
+
+![Alt Text](./print3.png)
+
+In postman, that bunch of bugged characters means that it received a different data, which in this case is a .gz file.
+
+(you can download it by clicling at the three dots in lower left and "save response to file")
 
 If the file requires a password and you provide an incorrect password, the server will return a 401 Unauthorized response.
 
