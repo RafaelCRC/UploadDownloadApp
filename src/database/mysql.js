@@ -2,11 +2,11 @@ const mysql = require('mysql2')
 
 var pool = mysql.createPool({
     "connectionLimit": 10000,
-    "user": "root", //should be ambient variable
-    "password": "root", //should be ambient variable
-    "database": "appdb", //should be ambient variable
-    "host": "localhost", //should be ambient variable
-    "port": "3306"  //should be ambient variable
+    "user": process.env.MYSQL_USER || "root",
+    "password": process.env.MYSQL_PASSWORD || "root",
+    "database": process.env.MYSQL_DATABASE || "appdb",
+    "host": process.env.MYSQL_HOST || "localhost",
+    "port": process.env.MYSQL_PORT || "3306"
 });
 
 exports.execute = (query, params=[]) => {
