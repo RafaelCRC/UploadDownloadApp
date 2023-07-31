@@ -117,7 +117,7 @@ npm install
 
 ## Database Setup
 
-The UploadDownloadApp uses SQLite as its database. Before running the application, you need to set up the database and create the necessary tables.
+The UploadDownloadApp uses MySQL as its database. Before running the application, you need to set up the database and create the necessary tables.
 
 ### Building the Database
 
@@ -139,7 +139,7 @@ npm run dbRebuild
 
 ### WIP Populating the Database (Optional)
 
-Currently this feature is no fully implemented
+Currently this feature is not fully implemented
 
 ## Running the Application
 
